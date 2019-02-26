@@ -8,7 +8,7 @@
   justify-content: space-between;
   align-items: center;
   width: 345px;
-  margin: 10px 0;
+  margin: 10px 0 10px 15px;
 }
 
 #map{
@@ -29,6 +29,7 @@ button, input {
 input {
   text-align: left;
   padding-left: 5px;
+  border-radius: inherit;
   cursor: auto;
 }
 

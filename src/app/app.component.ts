@@ -226,7 +226,7 @@ export class AppComponent implements OnInit {
 
     // Fit all markers after 1 second.
     setTimeout(function () {
-      _self.map.fitBounds(fg.getBounds());
+      _self.map.fitBounds(fg.getBounds()); // Получаем границы добавленной на карту, группы маркеров 'fg.getBounds()' и масштабируем карту под них методом - fitBounds.
     }, 1000);
 
     this.randBackgroundMarker();
