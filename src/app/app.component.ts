@@ -1,28 +1,39 @@
 import { Component, OnInit } from '@angular/core';
 
+// Объявляем Leaflet переменную, для того, чтобы можно было использовать Leaflet внутри компонента Angular.
 declare let L;
 
+// Декоратор для класса AppComponent. С объектом необходимых метаданных.
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   inputs: ['number'],
   styleUrls: ['./app.component.css']
 })
+
+// Создаем класс AppComponent.
 export class AppComponent implements OnInit {
 
   constructor() {
 
   }
 
+  // Создаем необходимые, для работы с картой, свойства класса.
   map: any;
   dropIcon: any;
+  fg: any = null;
   count: number = null;
 
+  // Метод инициализирующий компонент.
   ngOnInit() {
 
+    // Создаем новую карту, используя функционал L.
     this.map = L.map("map");
+
+    // Подгружаем тайлы для карты, с ресурса openstreetmap.org.
     L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(this.map);
 
+    // Подгружаем векторные тайлы для карты, с ресурса cloud.maptiler.com. Используя ключ авторизации, для запросов. Настраиваем опции тайлов.
     /*L.vectorGrid.protobuf("https://free-{s}.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key={key}", {
       //rendererFactory: L.canvas.tile,
       vectorTileLayerStyles: {
@@ -178,24 +189,27 @@ export class AppComponent implements OnInit {
       maxNativeZoom: 8
     }).addTo(this.map);*/
 
+    // Указываем координаты центра карты.
     this.map.setView([48.85, 2.35], 11);
 
+    // Создаем пользовательскую иконочку, для маркера. В качестве источника, указываем путь до svg-изображения.
     this.dropIcon = L.icon({
       iconUrl: '../assets/images/drop.svg',
       iconSize: [40, 40], //
     });
 
-    //console.log(this.map.getBounds().getSouthWest().lat);
-    //console.log(this.map.getBounds().getNorthEast().lng);
+    //console.log(this.map.getBounds().toBBoxString());
   }
 
+  // Метод создающий рандомные координаты маркеров. Метод приватный, т.к. используется только внутри данного класса.
   private getRandomLatLng(): any {
     return [
-      48.8 + 0.1 * Math.random(),
-      2.25 + 0.2 * Math.random()
+      this.map.getBounds().getSouthWest().lat + 0.38 * Math.random(),
+      this.map.getBounds().getSouthWest().lng + 1.28 * Math.random()
     ];
   }
 
+  // Метод создающий рандомные фоны, для маркеров. Метод приватный, т.к. используется только внутри данного класса.
   private randBackgroundMarker(): any {
     let elems = document.querySelectorAll('img');
     let chars = '0123456789ABCDEF'.split('');
@@ -214,21 +228,27 @@ export class AppComponent implements OnInit {
     }, 1500);
   }
 
+  // Метод добавляющий маркеры на карту, после нажатия на кнопку "Заполнить".
   addMarkers(ev): void {
 
     let _self = this;
 
-    let fg = L.featureGroup().addTo(this.map);
+    // При каждом новом нажатии по кнопке, удаляем предыдущую группу маркеров с карты.
+    (_self.fg !== null) ? _self.fg.remove() : false;
 
+    _self.fg = L.featureGroup().addTo(_self.map);
+
+    // Заполняем созданную для маркеров группу, значениями со случайными координатами. Добавляем к маркерам всплывающие окошки с текстом.
     for (let i = 0; i < _self.count; i += 1) {
-      L.marker(this.getRandomLatLng(), {icon: this.dropIcon}).addTo(fg).bindPopup("<b>Hello world!</b><br>I am a popup.");
+      L.marker(_self.getRandomLatLng(), {icon: _self.dropIcon}).addTo(_self.fg).bindPopup("<b>Hello world!</b><br>I am a popup.");
     }
 
-    // Fit all markers after 1 second.
+    // Добавляем все маркеры на карту, через 1 секунду.
     setTimeout(function () {
-      _self.map.fitBounds(fg.getBounds()); // Получаем границы добавленной на карту, группы маркеров 'fg.getBounds()' и масштабируем карту под них методом - fitBounds.
+      _self.map.fitBounds(_self.fg.getBounds()); // Получаем границы группы маркеров 'fg.getBounds()' и масштабируем карту под них методом - fitBounds.
     }, 1000);
 
+    // Добавляем случайные фоны, к маркерам.
     this.randBackgroundMarker();
 
   }
