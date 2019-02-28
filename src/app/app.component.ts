@@ -31,10 +31,10 @@ export class AppComponent implements OnInit {
     this.map = L.map("map");
 
     // Подгружаем тайлы для карты, с ресурса openstreetmap.org.
-    L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(this.map);
+    //L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(this.map);
 
     // Подгружаем векторные тайлы для карты, с ресурса cloud.maptiler.com. Используя ключ авторизации, для запросов. Настраиваем опции тайлов.
-    /*L.vectorGrid.protobuf("https://free-{s}.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key={key}", {
+    L.vectorGrid.protobuf("https://free-{s}.tilehosting.com/data/v3/{z}/{x}/{y}.pbf.pict?key={key}", {
       //rendererFactory: L.canvas.tile,
       vectorTileLayerStyles: {
         water: {
@@ -187,7 +187,7 @@ export class AppComponent implements OnInit {
       subdomains: "0123",
       key: 'BuNi4FPIgsaSVnVlaLoQ',
       maxNativeZoom: 8
-    }).addTo(this.map);*/
+    }).addTo(this.map);
 
     // Указываем координаты центра карты.
     this.map.setView([48.85, 2.35], 11);
